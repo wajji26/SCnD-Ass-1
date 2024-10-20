@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+
+public class Product
+{
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+
+    public Product(string name, decimal price)
+    {
+        Name = name;
+        Price = price;
+    }
+}
+
+public class ShoppingCart
+{
+    public List<Product> Products { get; set; }
+
+    public ShoppingCart()
+    {
+        Products = new List<Product>();
+    }
+
+    // Merge Sort function to sort products by price
+    public List<Product> MergeSort(List<Product> products)
+    {
+        if (products.Count <= 1)
+            return products;
+
+        // Divide the list into two halves
+        int mid = products.Count / 2;
+        List<Product> left = MergeSort(products.GetRange(0, mid));
+        List<Product> right = MergeSort(products.GetRange(mid, products.Count - mid));
+
+        // Merge the sorted halves
+        return Merge(left, right);
+    }
+
+    // Merge two sorted lists
+    private List<Product> Merge(List<Product> left, List<Product> right)
+    {
+        List<Product> sortedProducts = new List<Product>();
+        int i = 0, j = 0;
+
+        // Compare and merge products by price
+        while (i < left.Count && j < right.Count)
+        {
+            if (left[i].Price <= right[j].Price)
+            {
+                sortedProducts.Add(left[i]);
+                i++;
+            }
+            else
+            {
+                sortedProducts.Add(right[j]);
+                j++;
+            }
+        }
+
+        // Add any remaining items from both lists
+        sortedProducts.AddRange(left.GetRange(i, left.Count - i));
+        sortedProducts.AddRange(right.GetRange(j, right.Count - j));
+
+        return sortedProducts;
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        // Create a shopping cart and add some products
+        ShoppingCart cart = new ShoppingCart();
+        cart.Products.Add(new Product("Laptop", 1200.00m));
+        cart.Products.Add(new Product("T-shirt", 19.99m));
+        cart.Products.Add(new Product("Headphones", 99.99m));
+        cart.Products.Add(new Product("Smartphone", 699.99m));
+
+        // Sort the products by price
+        List<Product> sortedProducts = cart.MergeSort(cart.Products);
+
+        // Print sorted products
+        Console.WriteLine("Products sorted by price:");
+        foreach (var product in sortedProducts)
+        {
+            Console.WriteLine($"{product.Name}: ${product.Price}");
+        }
+    }
+}
